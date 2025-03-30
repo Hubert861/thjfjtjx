@@ -93,8 +93,10 @@ app.get('/posty', async (req, res) => {
     let limit = parseInt(req.query.limit) || 10;
     let przesuniecie = parseInt(req.query.przesuniecie) || 0;
 
-    const queryPost = 
-        `SELECT 
+    await db.promise().execute('SET SESSION group_concat_max_len = 100000')
+
+    const queryPost = `
+        SELECT 
             posts.*, 
             users.name AS user_name,
             GROUP_CONCAT(post_photos.image_path) AS image_paths
@@ -104,17 +106,24 @@ app.get('/posty', async (req, res) => {
         WHERE posts.status = "Git"
         GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.id DESC
-        LIMIT ? OFFSET ?`
+        LIMIT ? OFFSET ?`;
+
     db.query(queryPost, [limit, przesuniecie], (err, results) => {
-        res.json(results)
-    })
-})
+        if (err) {
+            console.error("Błąd podczas wykonywania zapytania:", err);
+            return res.status(500).json({ error: "Błąd podczas wykonywania zapytania." });
+        }
+
+        res.json(results);
+    });
+});
 
 
 app.get('/posty2', async (req, res) =>{
     let limit = parseInt(req.query.limit) || 10
     let przesuniecie = parseInt(req.query.przesuniecie) || 0
-
+    
+    await db.promise().execute('SET SESSION group_concat_max_len = 100000')
 
     const queryPost = 
     `SELECT 
@@ -148,7 +157,7 @@ app.post('/wyrok', async (req, res) => {
 
 
         
-    res.json({ sukces: true });
+    res.json({ sukces: true })
 
 })
 
@@ -157,7 +166,7 @@ app.post('/dodaj', async (req, res) => {
     const queryDodaj = 'INSERT INTO posts (tresc, autor_id, status) VALUES (?, ?, "NieGit")'
     const [wynik] = await db.promise().execute(queryDodaj, [daneDodaj.tresc, daneDodaj.id])
 
-    const postId = wynik.insertId;
+    const postId = wynik.insertId
     
 
     const queryDodajImg = 'INSERT INTO post_photos (post_id, image_path) VALUES (?, ?)'
@@ -166,7 +175,7 @@ app.post('/dodaj', async (req, res) => {
     for(item of daneDodaj.url){
         await db.promise().execute(queryDodajImg, [postId, item])
     }
-    res.json({ sukces: true });
+    res.json({ sukces: true })
 
 })
 
