@@ -10,10 +10,10 @@ app.use(express.json())
 
 const SECRET_KEY = '123'
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'aplikacja',
+    host: 'sql7.freesqldatabase.com',
+    user: 'sql7770349',
+    password: 'eAMxrK3vn9',
+    database: 'sql7770349',
 })
 
 app.post('/register', async (req, res) => {
@@ -89,27 +89,87 @@ app.post('/login', async (req, res)=>{
     res.json(odpowiedz)
 })
 
-app.get('/posty', async (req, res) =>{
+app.get('/posty', async (req, res) => {
+    let limit = parseInt(req.query.limit) || 10;
+    let przesuniecie = parseInt(req.query.przesuniecie) || 0;
+
+    const queryPost = 
+        `SELECT 
+            posts.*, 
+            users.name AS user_name,
+            GROUP_CONCAT(post_photos.image_path) AS image_paths
+        FROM posts
+        JOIN users ON posts.autor_id = users.id
+        LEFT JOIN post_photos ON post_photos.post_id = posts.id
+        WHERE posts.status = "Git"
+        GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
+        ORDER BY posts.id DESC
+        LIMIT ? OFFSET ?`
+    db.query(queryPost, [limit, przesuniecie], (err, results) => {
+        res.json(results)
+    })
+})
+
+
+app.get('/posty2', async (req, res) =>{
     let limit = parseInt(req.query.limit) || 10
     let przesuniecie = parseInt(req.query.przesuniecie) || 0
 
 
-    const queryPost = `SELECT 
-                        posts.*, 
-                        users.name AS user_name, 
-                        GROUP_CONCAT(post_photos.image_data) AS imgs 
-                        FROM posts
-                        JOIN users ON posts.autor_id = users.id
-                        LEFT JOIN post_photos ON post_photos.post_id = posts.id
-                        WHERE posts.status = "Git"
-                        GROUP BY posts.id
-                        ORDER BY posts.id DESC
-                        LIMIT ? OFFSET ?`
+    const queryPost = 
+    `SELECT 
+        posts.*, 
+        users.name AS user_name,
+        GROUP_CONCAT(post_photos.image_path) AS image_paths
+    FROM posts
+    JOIN users ON posts.autor_id = users.id
+    LEFT JOIN post_photos ON post_photos.post_id = posts.id
+    WHERE posts.status = "NieGit"
+    GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
+    ORDER BY posts.id ASC
+    LIMIT ? OFFSET ?`
 
     db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results)
     })
 })
+
+app.post('/wyrok', async (req, res) => {
+    const daneWyrok = req.body
+    const queryWyrok = 'UPDATE posts SET status = ? WHERE id = ?'
+
+    if(daneWyrok.git){
+        await db.promise().execute(queryWyrok, ['Git', daneWyrok.id])
+    }
+    else{
+        await db.promise().execute(queryWyrok, ['Odrzucony', daneWyrok.id])
+    }
+    
+
+
+        
+    res.json({ sukces: true });
+
+})
+
+app.post('/dodaj', async (req, res) => {
+    const daneDodaj = req.body
+    const queryDodaj = 'INSERT INTO posts (tresc, autor_id, status) VALUES (?, ?, "NieGit")'
+    const [wynik] = await db.promise().execute(queryDodaj, [daneDodaj.tresc, daneDodaj.id])
+
+    const postId = wynik.insertId;
+    
+
+    const queryDodajImg = 'INSERT INTO post_photos (post_id, image_path) VALUES (?, ?)'
+    
+
+    for(item of daneDodaj.url){
+        await db.promise().execute(queryDodajImg, [postId, item])
+    }
+    res.json({ sukces: true });
+
+})
+
 
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
