@@ -108,7 +108,7 @@ app.get('/posty', async (req, res) => {
         ORDER BY posts.id DESC
         LIMIT ? OFFSET ?`;
 
-    db.query(queryPost, [limit, przesuniecie], (results) => {
+    db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results);
     });
 });
@@ -133,7 +133,7 @@ app.get('/posty2', async (req, res) =>{
     ORDER BY posts.id ASC
     LIMIT ? OFFSET ?`
 
-    db.query(queryPost, [limit, przesuniecie], (results) => {
+    db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results)
     })
 })
