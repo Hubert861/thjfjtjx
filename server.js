@@ -11,9 +11,9 @@ app.use(express.json())
 const SECRET_KEY = '123'
 const db = mysql.createPool({
     host: 'sql7.freesqldatabase.com',
-    user: 'sql7770349',
-    password: 'eAMxrK3vn9',
-    database: 'sql7770349',
+    user: 'sql7771606',
+    password: 'y9ja2q9bBt',
+    database: 'sql7771606',
 })
 
 app.post('/register', async (req, res) => {
@@ -108,12 +108,7 @@ app.get('/posty', async (req, res) => {
         ORDER BY posts.id DESC
         LIMIT ? OFFSET ?`;
 
-    db.query(queryPost, [limit, przesuniecie], (err, results) => {
-        if (err) {
-            console.error("Błąd podczas wykonywania zapytania:", err);
-            return res.status(500).json({ error: "Błąd podczas wykonywania zapytania." });
-        }
-
+    db.query(queryPost, [limit, przesuniecie], (results) => {
         res.json(results);
     });
 });
@@ -138,7 +133,7 @@ app.get('/posty2', async (req, res) =>{
     ORDER BY posts.id ASC
     LIMIT ? OFFSET ?`
 
-    db.query(queryPost, [limit, przesuniecie], (err, results) => {
+    db.query(queryPost, [limit, przesuniecie], (results) => {
         res.json(results)
     })
 })
