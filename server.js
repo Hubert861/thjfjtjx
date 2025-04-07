@@ -189,7 +189,10 @@ app.get('/komentarze', async (req, res) =>{
     let post = parseInt(req.query.post)
 
     const queryPost = 
-    `SELECT * FROM comments WHERE post_id = ?`
+    `SELECT *, users.name 
+    FROM comments
+    JOIN users ON comments.user_id = users.id
+    WHERE post_id = ?`
 
     db.query(queryPost, post, (err, results) => {
         res.json(results)
