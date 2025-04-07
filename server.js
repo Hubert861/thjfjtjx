@@ -185,6 +185,18 @@ app.post('/dodajKom', async (req, res) => {
 })
 
 
+app.get('/komentarze', async (req, res) =>{
+    let post = parseInt(req.query.post)
+
+    const queryPost = 
+    `SELECT * FROM comments WHERE post_id = ?`
+
+    db.query(queryPost, post, (err, results) => {
+        res.json(results)
+    })
+})
+
+
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
 })
