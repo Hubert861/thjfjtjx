@@ -192,7 +192,8 @@ app.get('/komentarze', async (req, res) =>{
     `SELECT *, users.name 
     FROM comments
     JOIN users ON comments.user_id = users.id
-    WHERE post_id = ?`
+    WHERE post_id = ?
+    GROUP BY data_utworzenia DESC`
 
     db.query(queryPost, post, (err, results) => {
         res.json(results)
