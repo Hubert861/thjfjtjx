@@ -184,7 +184,6 @@ app.post('/dodajKom', async (req, res) => {
 
 })
 
-
 app.get('/komentarze', async (req, res) =>{
     let post = parseInt(req.query.post)
 
@@ -200,6 +199,15 @@ app.get('/komentarze', async (req, res) =>{
     })
 })
 
+app.post('/dodajOdp', async (req, res) => {
+    const daneDodaj = req.body
+    const queryDodaj = 'INSERT INTO comments (user_id, post_id, tresc, parent_id) VALUES (?, ?, ?, ?)'
+    const [wynik] = await db.promise().execute(queryDodaj, [daneDodaj.autor, daneDodaj.idPosta, daneDodaj.tresc, daneDodaj.parent_id])
+
+    
+    res.json({ sukces: true })
+
+})
 
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
