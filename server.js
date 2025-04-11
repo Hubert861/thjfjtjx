@@ -195,10 +195,10 @@ app.get('/komentarze', async (req, res) =>{
        COUNT(likesKom.id) AS ileLikow
     FROM comments
     JOIN users ON comments.user_id = users.id
-    LEFT JOIN likesKom ON likesKom.kom_id = comments.id  
-    WHERE comments.post_id = ?
-    GROUP BY comments.id, users.name  
-    ORDER BY ileLikow DESC`
+    LEFT JOIN likesKom ON likesKom.kom_id = comments.id
+    WHERE comments.post_id = 1
+    GROUP BY comments.id, users.name
+    ORDER BY ileLikow DESC, comments.data_utworzenia DESC;`
 
     db.query(queryPost, post, (err, results) => {
         res.json(results)
