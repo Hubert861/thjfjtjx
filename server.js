@@ -84,8 +84,6 @@ app.post('/login', async (req, res)=>{
             }
         } 
     
-
-    console.log('okej')
     res.json(odpowiedz)
 })
 
@@ -99,11 +97,13 @@ app.get('/posty', async (req, res) => {
         SELECT 
             posts.*, 
             users.name AS user_name,
-            GROUP_CONCAT(post_photos.image_path) AS image_paths
+            GROUP_CONCAT(post_photos.image_path) AS image_paths,
+            COUNT(comments.id) AS policzone
         FROM posts
         JOIN users ON posts.autor_id = users.id
         LEFT JOIN post_photos ON post_photos.post_id = posts.id
-        WHERE posts.status = "Git"
+        LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id = NULL
+        WHERE posts.status = "Git" 
         GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.id DESC
         LIMIT ? OFFSET ?`;
