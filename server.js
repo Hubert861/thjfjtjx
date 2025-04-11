@@ -98,11 +98,13 @@ app.get('/posty', async (req, res) => {
             posts.*, 
             users.name AS user_name,
             GROUP_CONCAT(DISTINCT post_photos.image_path) AS image_paths,
-            COUNT(DISTINCT comments.id) AS policzone
+            COUNT(DISTINCT comments.id) AS policzone,
+            COUNT(DISTINCT likesPosts.id) AS ileLikow
         FROM posts
         JOIN users ON posts.autor_id = users.id
         LEFT JOIN post_photos ON post_photos.post_id = posts.id
         LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id IS NULL
+        LEFT JOIN likesPosts ON likesPosts.post_id = posts.id
         WHERE posts.status = "Git" 
         GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.data_utworzenia DESC
