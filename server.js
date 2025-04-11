@@ -238,6 +238,34 @@ app.get('/sprLikes', async (req, res) =>{
 
 })
 
+app.post('/polubPost', async (req, res) => {
+    const daneLike = req.body
+    const queryDodaj = 'INSERT INTO likesPost (user_id, post_id) VALUES (?, ?)'
+    const queryUsun = 'DELETE FROM likesPost WHERE user_id = ? AND post_id = ?'
+    if(daneLike.polubione){
+        await db.promise().execute(queryDodaj, [daneLike.autor, daneLike.idPost])
+    }
+    else{
+        await db.promise().execute(queryUsun, [daneLike.autor, daneLike.idPost])
+    }
+
+    res.json({ sukces: true })
+
+})
+
+app.get('/sprLikes2', async (req, res) =>{
+    let user = parseInt(req.query.user)
+
+    const querySpr = 
+    `SELECT likesPosts.post_id FROM likesPosts
+    WHERE likesPost.user_id = ?`
+
+    const wynik = await db.promise().execute(querySpr, [user])
+    res.json(wynik)
+
+})
+
+
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
 })
