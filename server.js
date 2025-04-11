@@ -106,7 +106,7 @@ app.get('/posty', async (req, res) => {
         WHERE posts.status = "Git" 
         GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.id DESC
-        LIMIT 10 OFFSET 0`;
+        LIMIT ? OFFSET ?`;
 
     db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results);
