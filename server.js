@@ -228,12 +228,12 @@ app.get('/sprLikes', async (req, res) =>{
     let post = parseInt(req.query.post)
     let user = parseInt(req.query.user)
 
-    const queryPost = 
+    const querySpr = 
     `SELECT likesKom.id FROM likesKom 
     JOIN comments ON likesKom.kom_id = comments.id
     WHERE likesKom.user_id = ? AND comments.post_id =?`
 
-    const wynik = await db.promise().execute(queryUsun, [user, post])
+    const wynik = await db.promise().execute(querySpr, [user, post])
     res.json(wynik)
 
 })
