@@ -104,6 +104,7 @@ app.get('/posty', async (req, res) => {
         LEFT JOIN post_photos ON post_photos.post_id = posts.id
         LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id IS NULL
         WHERE posts.status = "Git" 
+        GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.data_utworzenia DESC
         LIMIT ? OFFSET ?;`;
 
