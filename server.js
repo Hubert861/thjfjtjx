@@ -224,6 +224,20 @@ app.post('/polubKom', async (req, res) => {
 
 })
 
+app.get('/sprLikes', async (req, res) =>{
+    let post = parseInt(req.query.post)
+    let user = parseInt(req.query.user)
+
+    const queryPost = 
+    `SELECT likesKom.id FROM likesKom 
+    JOIN comments ON likesKom.kom_id = comments.id
+    WHERE likesKom.user_id = ? AND comments.post_id =?`
+
+    const wynik = await db.promise().execute(queryUsun, [user, post])
+    res.json(wynik)
+
+})
+
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
 })
