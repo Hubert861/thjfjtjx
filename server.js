@@ -209,6 +209,23 @@ app.post('/dodajOdp', async (req, res) => {
 
 })
 
+app.post('/polubKom', async (req, res) => {
+    const daneDodaj = req.body
+    const queryDodaj = ''
+    if(daneDodaj.polubione){
+       queryDodaj = 'INSERT INTO likesKom (user_id, kom_id) VALUES (?, ?)'
+    }
+    else{
+        queryDodaj = 'DELETE FROM likesKom WHERE user_id = ? AND kom_id = ?'
+    }
+    
+    await db.promise().execute(queryDodaj, [daneDodaj.autor, daneDodaj.idKom])
+
+    
+    res.json({ sukces: true })
+
+})
+
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
 })
