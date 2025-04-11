@@ -258,7 +258,7 @@ app.get('/sprLikes2', async (req, res) =>{
 
     const querySpr = 
     `SELECT likesPosts.post_id FROM likesPosts
-    WHERE likesPost.user_id = ?`
+    WHERE likesPosts.user_id = ?`
 
     const wynik = await db.promise().execute(querySpr, [user])
     res.json(wynik)
