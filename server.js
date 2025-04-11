@@ -190,11 +190,15 @@ app.get('/komentarze', async (req, res) =>{
     let post = parseInt(req.query.post)
 
     const queryPost = 
-    `SELECT comments.*, users.name 
+    `SELECT comments.*, 
+       users.name,
+       COUNT(likesKom.id) AS ileLikow
     FROM comments
     JOIN users ON comments.user_id = users.id
-    WHERE post_id = ?
-    ORDER BY data_utworzenia DESC`
+    LEFT JOIN likesKom ON likesKom.kom_id = comments.id  
+    WHERE comments.post_id = ?
+    GROUP BY comments.id, users.name  
+    ORDER BY ileLikow DESC`
 
     db.query(queryPost, post, (err, results) => {
         res.json(results)
