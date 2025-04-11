@@ -240,8 +240,8 @@ app.get('/sprLikes', async (req, res) =>{
 
 app.post('/polubPost', async (req, res) => {
     const daneLike = req.body
-    const queryDodaj = 'INSERT INTO likesPost (user_id, post_id) VALUES (?, ?)'
-    const queryUsun = 'DELETE FROM likesPost WHERE user_id = ? AND post_id = ?'
+    const queryDodaj = 'INSERT INTO likesPosts (user_id, post_id) VALUES (?, ?)'
+    const queryUsun = 'DELETE FROM likesPosts WHERE user_id = ? AND post_id = ?'
     if(daneLike.polubione){
         await db.promise().execute(queryDodaj, [daneLike.autor, daneLike.idPost])
     }
