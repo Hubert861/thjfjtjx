@@ -210,18 +210,16 @@ app.post('/dodajOdp', async (req, res) => {
 })
 
 app.post('/polubKom', async (req, res) => {
-    const daneDodaj = req.body
-    const queryDodaj = ''
-    if(daneDodaj.polubione){
-       queryDodaj = 'INSERT INTO likesKom (user_id, kom_id) VALUES (?, ?)'
+    const daneLike = req.body
+    const queryDodaj = 'INSERT INTO likesKom (user_id, kom_id) VALUES (?, ?)'
+    const queryUsun = 'DELETE FROM likesKom WHERE user_id = ? AND kom_id = ?'
+    if(daneLike.polubione){
+        await db.promise().execute(queryDodaj, [daneLike.autor, daneLike.idKom])
     }
     else{
-        queryDodaj = 'DELETE FROM likesKom WHERE user_id = ? AND kom_id = ?'
+        await db.promise().execute(queryUsun, [daneLike.autor, daneLike.idKom])
     }
-    
-    await db.promise().execute(queryDodaj, [daneDodaj.autor, daneDodaj.idKom])
 
-    
     res.json({ sukces: true })
 
 })
