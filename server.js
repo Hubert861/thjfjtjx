@@ -229,7 +229,7 @@ app.get('/sprLikes', async (req, res) =>{
     let user = parseInt(req.query.user)
 
     const querySpr = 
-    `SELECT likesKom.id FROM likesKom 
+    `SELECT likesKom.kom_id FROM likesKom 
     JOIN comments ON likesKom.kom_id = comments.id
     WHERE likesKom.user_id = ? AND comments.post_id =?`
 
