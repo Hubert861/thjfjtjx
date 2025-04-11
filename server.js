@@ -102,11 +102,11 @@ app.get('/posty', async (req, res) => {
         FROM posts
         JOIN users ON posts.autor_id = users.id
         LEFT JOIN post_photos ON post_photos.post_id = posts.id
-        LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id = NULL
+        LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id IS NULL
         WHERE posts.status = "Git" 
         GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.id DESC
-        LIMIT ? OFFSET ?`;
+        LIMIT 10 OFFSET 0`;
 
     db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results);
