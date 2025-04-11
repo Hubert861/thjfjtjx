@@ -97,16 +97,15 @@ app.get('/posty', async (req, res) => {
         SELECT 
             posts.*, 
             users.name AS user_name,
-            GROUP_CONCAT(post_photos.image_path) AS image_paths,
+            GROUP_CONCAT(DISTINCT post_photos.image_path) AS image_paths,
             COUNT(DISTINCT comments.id) AS policzone
         FROM posts
         JOIN users ON posts.autor_id = users.id
         LEFT JOIN post_photos ON post_photos.post_id = posts.id
         LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id IS NULL
         WHERE posts.status = "Git" 
-        GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
-        ORDER BY posts.id DESC
-        LIMIT ? OFFSET ?`;
+        ORDER BY posts.data_utworzenia DESC
+        LIMIT ? OFFSET ?;`;
 
     db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results);
