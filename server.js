@@ -108,7 +108,7 @@ app.get('/posty', async (req, res) => {
         WHERE posts.status = "Git" 
         GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
         ORDER BY posts.data_utworzenia DESC
-        LIMIT ? OFFSET ?;`;
+        LIMIT ? OFFSET ?`
 
     db.query(queryPost, [limit, przesuniecie], (err, results) => {
         res.json(results);
@@ -271,6 +271,34 @@ app.get('/sprLikes2', async (req, res) =>{
 
 })
 
+app.post('/Polubione', async (req, res) => {
+    let limit = parseInt(req.query.limit) || 10;
+    let przesuniecie = parseInt(req.query.przesuniecie) || 0;
+    let id = parseInt(req.query.id)
+
+    await db.promise().execute('SET SESSION group_concat_max_len = 100000')
+
+    const query = `
+                SELECT 
+            posts.*, 
+            users.name AS user_name,
+            GROUP_CONCAT(DISTINCT post_photos.image_path) AS image_paths,
+            COUNT(DISTINCT comments.id) AS policzone,
+            COUNT(DISTINCT likesPosts.id) AS ileLikow
+        FROM posts
+        JOIN users ON posts.autor_id = users.id
+        LEFT JOIN post_photos ON post_photos.post_id = posts.id
+        LEFT JOIN comments ON comments.post_id = posts.id AND comments.parent_id IS NULL
+        LEFT JOIN likesPosts ON likesPosts.post_id = posts.id
+        WHERE posts.status = "Git"  AND likesPosts.user_id = ?
+        GROUP BY posts.id, posts.tresc, posts.data_utworzenia, users.name
+        ORDER BY likesPosts.kiedy DESC
+        LIMIT ? OFFSET ?`
+
+        db.query(queryPost, [id, limit, przesuniecie], (err, results) => {
+            res.json(results);
+        });
+})
 
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000')
