@@ -295,7 +295,7 @@ app.post('/Polubione', async (req, res) => {
         ORDER BY likesPosts.kiedy DESC
         LIMIT ? OFFSET ?`
 
-        db.query(queryPost, [id, limit, przesuniecie], (err, results) => {
+        db.query(query, [id, limit, przesuniecie], (err, results) => {
             res.json(results);
         });
 })
