@@ -295,9 +295,8 @@ app.post('/Polubione', async (req, res) => {
         ORDER BY likesPosts.kiedy DESC
         LIMIT ? OFFSET ?`
 
-        db.query(query, [id, limit, przesuniecie], (err, results) => {
-            res.json(results);
-        });
+        const wynik = await db.promise().query(query, [id, limit, przesuniecie]);
+        res.json(wynik);
 })
 
 app.listen(3000, () => {
